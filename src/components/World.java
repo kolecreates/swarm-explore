@@ -25,7 +25,13 @@ public class World {
      * @param y axis coordinate
      * @return boolean
      */
-    public boolean atBorder(Point point){
+    public boolean onBorder(Point point){
         return point.onAxis() || point.getX() == width || point.getY() == height ;
+    }
+    public boolean outOfBounds(Point point){
+        return point.getX() < 0 || point.getY() < 0 || point.getX() > width || point.getY() > height ;
+    }
+    public boolean isExplored(Map map){
+        return map.getWidth() == width && map.getHeight() == height && map.isExplored();
     }
 }

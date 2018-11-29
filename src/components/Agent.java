@@ -10,55 +10,58 @@ import utility.Point;
  */
 public class Agent {
     private final int ADJUST_VELOCITY_CHANCE = 5;
-    private World world;
-    private Map map;
-    private Point origin;
+    private final World world;
+    private final Map map;
+    private final Point origin;
     private Point position;
     private Point velocity;
-    private Random rng;
+    private final Random rng;
     /**
      * Create an instance of an Agent as part of a swarm.
      * @param world to be explored
      * @param map to log explored points on and model the world.
      * @param position initial starting point of the agent
      */
-    public Agent(World world, Map map, Point position){
+    public Agent(World world, Map map, Point position, Point velocity){
         this.world = world;
         this.map = map;
         this.origin = position;
         this.position = position;
-        this.velocity = new Point(1,0);
+        this.velocity = velocity;
         this.rng = new Random();
     }
     /**
-     * Cause the agent to adjust its position by 1 unit.
-     * 
+     * Cause the agent to adjust its position by 1 unit. 
+     * The agent will automatically log its findings on the map after
+     * each movement.
      * @return its new position
      */
     public Point move(){
         adjustVelocity();
         position = position.add(velocity);
+        log();
         return position;
     }
     /**
-     * Reverse agents velocity if a border is detected. Otherwise,
+     * Change agents velocity if a border is detected. Otherwise,
      * there's a 5% chance the velocity will be mixed up.
      */
     private void adjustVelocity(){
-        if(world.atBorder(position)){
-            velocity = velocity.negative();
-        }else{
-            int chance = rng.nextInt(100);
-            if(chance > ADJUST_VELOCITY_CHANCE){
-                velocity = velocity.mixup();
-            }
+        int chance = rng.nextInt(100);
+        if(chance < ADJUST_VELOCITY_CHANCE){
+            velocity = velocity.mixup();
+        }
+        Point temp = position.add(velocity);
+        while(world.outOfBounds(temp)){
+            velocity = velocity.mixup();
+            temp = position.add(velocity);
         }
     }
     /**
      * Update the map with the agents latest position and border detection.
      */
     private void log(){
-        if(world.atBorder(position)){
+        if(world.onBorder(position)){
             if(isCloserToXAxis()){
                 map.addBorderPointX(position);
             }else{
