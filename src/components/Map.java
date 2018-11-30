@@ -9,20 +9,19 @@ import utility.Point;
  * @since Nov 29, 2018
  */
 public class Map {
-    static final int ESTIMATED_POINT = 0;
-    static final int EXPLORED_POINT = 1;
+    public static final int ESTIMATED_POINT = 0;
+    public static final int EXPLORED_POINT = 1;
     private int exploredPointsCount = 0;
+    private int width = 0;
+    private int height = 0;
     private boolean xMaxed = false;
     private boolean yMaxed = false;
-    private ArrayList<Integer> xPoints;
-    private ArrayList<Integer> yPoints;
+    private ArrayList<ArrayList<Integer>> points;
     /**
      * Initialize a new map. Maps start as a single point in space.
      */
     public Map(){
-        xPoints = new ArrayList<>();
-        yPoints = new ArrayList<>();
-        addPoint(new Point(0,0));
+        points = new ArrayList<ArrayList<Integer>>();
     }
     /**
      * Register a point on the map as explored. The size of the map will expand
@@ -30,15 +29,16 @@ public class Map {
      * @param point
      */
     public void addPoint(Point point){
-        if(point.getX() >= getWidth()){
-            setWidth(point.getX());
+        if(point.getX() >= width){
+            expandX(point.getX()+1);
         }
-        if(point.getY() >= getHeight()){
-            setHeight(point.getY());
+        if(point.getY() >= height){
+            expandY(point.getY()+1);
         }
-        if(xPoints.get(point.getX()) == ESTIMATED_POINT){
-           xPoints.set(point.getX(), EXPLORED_POINT);
-           yPoints.set(point.getY(), EXPLORED_POINT); 
+        if(points.get(point.getX()).get(point.getY()) == ESTIMATED_POINT){
+           ArrayList<Integer> temp = points.get(point.getX());
+           temp.set(point.getY(), EXPLORED_POINT);
+           points.set(point.getX(), temp);
            exploredPointsCount++;
         } 
     }
@@ -64,7 +64,7 @@ public class Map {
      * @return width
      */
     public int getWidth(){
-        return xPoints.size();
+        return width;
     }
     /**
      * Get the height of the map. Each point may not be explored, but this is
@@ -72,37 +72,57 @@ public class Map {
      * @return height
      */
     public int getHeight(){
-        return yPoints.size();
+        return height;
     }
+    /**
+     * Access the raw points of this map
+     * @return 
+     */
+    public ArrayList<ArrayList<Integer>> getPoints(){
+        return points;
+    } 
     /**
      * Get the percentage of the current known World size that is explored.
      * @return double
      */
     public double percentExplored(){
         if(exploredPointsCount == 0){ return 0.0; }
-        return (double) exploredPointsCount / (double) (getHeight()*getWidth());
+        return (double) exploredPointsCount / (double) (width*height);
     }
+    /**
+     * Determine if the number of explored points is the same as the number of 
+     * current points on the map.
+     * @return 
+     */
     public boolean isExplored(){
         return exploredPointsCount == (getHeight()*getWidth());
     }
     /**
-     * Expand the current x axis of potential explored points.
-     * @param x 
+     * Increase the width of the map to the specified integer value.
+     * @param x width to expand to 
      */
-    private void setWidth(int x){
-        int dx = x + 1 - getWidth();
-        for(int i = 0; i < dx; i++){
-            xPoints.add(ESTIMATED_POINT);
+    private void expandX(int x){
+        for(int i = 0; i < x-width; i++){
+            ArrayList<Integer> temp = new ArrayList<Integer>();
+            for(int j = 0; j < height; j++){
+                temp.add(ESTIMATED_POINT);
+            }
+            points.add(temp);
         }
+        width = x;
     }
     /**
-     * Expand the current y axis of potential explored points.
-     * @param y 
+     * Increase the height of the map to the specified integer value.
+     * @param y height to expand to 
      */
-    private void setHeight(int y){
-        int dx = y + 1 - getHeight();
-        for(int i = 0; i < dx; i++){
-            yPoints.add(ESTIMATED_POINT);
+    private void expandY(int y){
+        for(int i = 0; i < points.size(); i++){
+            ArrayList<Integer> temp = points.get(i);
+            for(int j = 0; j < y - height; j++){
+                temp.add(ESTIMATED_POINT);
+            }
+            points.set(i, temp);
         }
+        height = y;
     }
 }

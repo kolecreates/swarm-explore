@@ -34,4 +34,10 @@ public class World {
     public boolean isExplored(Map map){
         return map.getWidth() == width && map.getHeight() == height && map.isExplored();
     }
+    public int getWidth(){
+        return width;
+    }
+    public int getHeight(){
+        return height;
+    }
 }
