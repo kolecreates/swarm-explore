@@ -23,6 +23,9 @@ public class Point {
     public Point add(Point point){
         return new Point(x + point.getX(), y + point.getY());
     }
+    public Point mult(Point point){
+        return new Point(x * point.getX(), y * point.getY());
+    }
     public Point distance(Point point){
         return this.subtract(point).absolute();
     }

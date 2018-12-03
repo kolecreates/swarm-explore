@@ -3,7 +3,6 @@ package agents;
 import components.Map;
 import components.World;
 import utility.Point;
-
 /**
  *
  * @author kole
@@ -12,6 +11,12 @@ import utility.Point;
  * areas of the map.
  */
 public class SmartAgent extends Agent {
+    /**
+     * Initialize the SmartAgent just the same as standard Agent class.
+     * @param world
+     * @param map
+     * @param position 
+     */
     public SmartAgent(World world, Map map, Point position){
         super(world, map, position);
     }
