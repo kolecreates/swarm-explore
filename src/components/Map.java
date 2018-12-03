@@ -12,6 +12,7 @@ public class Map {
     public static final int ESTIMATED_POINT = 0;
     public static final int EXPLORED_POINT = 1;
     private int exploredPointsCount = 0;
+    private int revisitPointCount = 0;
     private int width = 0;
     private int height = 0;
     private boolean xMaxed = false;
@@ -40,6 +41,8 @@ public class Map {
            temp.set(point.getY(), EXPLORED_POINT);
            points.set(point.getX(), temp);
            exploredPointsCount++;
+        }else{
+           revisitPointCount++;
         } 
     }
     /**
@@ -90,12 +93,30 @@ public class Map {
         return (double) exploredPointsCount / (double) (width*height);
     }
     /**
+     * Calculate how efficiently the map is being created by measuring
+     * how many points were newly explored out of total number of points moved to.
+     * @return 
+     */
+    public double getEfficiency(){
+        return (double) exploredPointsCount / (exploredPointsCount + revisitPointCount);
+    }
+    /**
      * Determine if the number of explored points is the same as the number of 
      * current points on the map.
      * @return 
      */
     public boolean isExplored(){
-        return exploredPointsCount == (getHeight()*getWidth());
+        return exploredPointsCount == (width*height);
+    }
+    /**
+     * Determine if the passed point has already been explored;
+     * @param point
+     * @return bool
+     */
+    public boolean isExplored(Point point){
+        if(point.getX() >= points.size() || point.getX() < 0){ return false; }
+        else if(point.getY() >= points.get(point.getX()).size() || point.getY() < 0){ return false; }
+        return points.get(point.getX()).get(point.getY()) == EXPLORED_POINT;
     }
     /**
      * Increase the width of the map to the specified integer value.

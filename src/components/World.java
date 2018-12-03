@@ -32,7 +32,7 @@ public class World {
         return point.getX() < 0 || point.getY() < 0 || point.getX() > width || point.getY() > height ;
     }
     public boolean isExplored(Map map){
-        return map.getWidth() == width && map.getHeight() == height && map.isExplored();
+        return map.getWidth() >= width && map.getHeight() >= height && map.isExplored();
     }
     public int getWidth(){
         return width;

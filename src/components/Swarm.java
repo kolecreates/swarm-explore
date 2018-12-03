@@ -1,7 +1,9 @@
 package components;
 
+import agents.Agent;
+import agents.AgentInterface;
+import agents.SmartAgent;
 import java.util.ArrayList;
-import java.util.Random;
 import utility.Point;
 
 /**
@@ -13,23 +15,28 @@ import utility.Point;
 public class Swarm {
     private final World world;
     private final Map map;
-    private final Random rng = new Random();
-    private ArrayList<Agent> agents;
+    private ArrayList<AgentInterface> agents;
     /**
      * Create a new swarm with an existing world. A swarm will initialize an internal
      * map that will be used to model what it knows about the world it lives.
      * @param world for which the swarm shall explore
      * @param size the number of agents in the swarm
      */
-    public Swarm(World world, int size){
+    public Swarm(World world, int size, boolean smart){
         this.world = world;
         this.map = new Map();
-        this.agents = new ArrayList<Agent>();
+        this.agents = new ArrayList<AgentInterface>();
         Point origin = new Point(0,0);
-        for(int i = 0; i < size; i++){
-            Point velocity = generateRandomVelocity();
-            agents.add(new Agent(world, map, origin, velocity));
+        if(smart){
+          for(int i = 0; i < size; i++){
+            agents.add(new SmartAgent(world, map, origin));
+          }  
+        }else {
+            for(int i = 0; i < size; i++){
+                agents.add(new Agent(world, map, origin));
+            }
         }
+        
     }
     /**
      * Step forward with agent movement and mapping. 
@@ -53,17 +60,24 @@ public class Swarm {
     public Map getMap(){
         return map;
     }
-    public String toString(){
-        return "Size: " + agents.size() + " Explored: " + (map.percentExplored()*100) + "%";
-    }
     /**
-     * Random velocity needed for initializing agents in the swarm.
-     * @return point object representing velocity
+     * Get the agents of this swarm
+     * @return arraylist of agent objects
      */
-    private Point generateRandomVelocity(){
-        int[] v = { -1, 0, 1 };
-        int x = v[rng.nextInt(v.length)];
-        int y = v[rng.nextInt(v.length)];
-        return new Point(x,y);
+    public ArrayList<AgentInterface> getAgents(){
+        return agents;
     }
+    public String toString(){
+        StringBuilder bldr = new StringBuilder();
+        bldr.append("Size: ");
+        bldr.append(agents.size());
+        bldr.append(" Explored: ");
+        bldr.append((map.percentExplored()*100));
+        bldr.append("%");
+        bldr.append(" Efficiency: ");
+        bldr.append((map.getEfficiency()*100));
+        bldr.append("%");
+        return bldr.toString();
+    }
+    
 }

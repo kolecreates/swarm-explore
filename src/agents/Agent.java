@@ -1,5 +1,7 @@
-package components;
+package agents;
 
+import components.Map;
+import components.World;
 import java.util.Random;
 import utility.Point;
 
@@ -8,27 +10,27 @@ import utility.Point;
  * @since Nov 29, 2018
  * Represents an autonomous unit in a swarm. Explores a world.
  */
-public class Agent {
-    private final int ADJUST_VELOCITY_CHANCE = 5;
-    private final World world;
-    private final Map map;
-    private final Point origin;
-    private Point position;
-    private Point velocity;
-    private final Random rng;
+public class Agent implements AgentInterface {
+    protected final int ADJUST_VELOCITY_CHANCE = 5;
+    protected final World world;
+    protected final Map map;
+    protected final Point origin;
+    protected Point position;
+    protected Point velocity;
+    protected final Random rng;
     /**
      * Create an instance of an Agent as part of a swarm.
      * @param world to be explored
      * @param map to log explored points on and model the world.
      * @param position initial starting point of the agent
      */
-    public Agent(World world, Map map, Point position, Point velocity){
+    public Agent(World world, Map map, Point position){
+        this.rng = new Random();
         this.world = world;
         this.map = map;
         this.origin = position;
         this.position = position;
-        this.velocity = velocity;
-        this.rng = new Random();
+        this.velocity = generateRandomVelocity();
     }
     /**
      * Cause the agent to adjust its position by 1 unit. 
@@ -36,6 +38,7 @@ public class Agent {
      * each movement.
      * @return its new position
      */
+    @Override
     public Point move(){
         adjustVelocity();
         position = position.add(velocity);
@@ -43,24 +46,31 @@ public class Agent {
         return position;
     }
     /**
-     * Change agents velocity if a border is detected. Otherwise,
-     * there's a 5% chance the velocity will be mixed up.
+     * access this agent's current position as a Point object
+     * @return 
      */
-    private void adjustVelocity(){
+    @Override
+    public Point getPosition(){
+        return position;
+    }
+    /**
+     * Change agents velocity after each move.
+     */
+    protected void adjustVelocity(){
         int chance = rng.nextInt(100);
         if(chance < ADJUST_VELOCITY_CHANCE){
-            velocity = velocity.mixup();
+            velocity = generateRandomVelocity();
         }
         Point temp = position.add(velocity);
         while(world.outOfBounds(temp)){
-            velocity = velocity.mixup();
+            velocity = generateRandomVelocity();
             temp = position.add(velocity);
         }
     }
     /**
      * Update the map with the agents latest position and border detection.
      */
-    private void log(){
+    protected void log(){
         if(world.onBorder(position)){
             if(isCloserToXAxis()){
                 map.addBorderPointX(position);
@@ -78,5 +88,18 @@ public class Agent {
     private boolean isCloserToXAxis(){
         Point dist = position.distance(origin);
         return dist.getX() > dist.getY();
+    }
+    
+    /**
+     * Random velocity needed for random mixup and initialization.
+     * Recursively generate to prevent 0,0 vectors.
+     * @return point object representing velocity
+     */
+    protected Point generateRandomVelocity(){
+        int[] v = { -1, 0, 1 };
+        int x = v[rng.nextInt(v.length)];
+        int y = v[rng.nextInt(v.length)];
+        if(x == 0 && y == 0){ return generateRandomVelocity(); }
+        return new Point(x,y);
     }
 }
