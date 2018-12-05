@@ -66,4 +66,10 @@ public class Environment {
         Point origin = origins.get(botIndex);
         return positionFromBot.add(origin);
     }
+    public int getWidth(){
+        return width;
+    }
+    public int getHeight(){
+        return height;
+    }
 }

@@ -3,6 +3,8 @@ package general;
 import bots.Bot;
 import components.Environment;
 import components.ExternalMap;
+import components.ExternalMapToRegularMapAdapter;
+import components.Map;
 import components.Swarm;
 import components.World;
 import graphics.MainPanel;
@@ -31,11 +33,12 @@ public class Launcher {
     }
     private static void botSwarm(){
         Environment env = new Environment(100,100);
-        ExternalMap map = new ExternalMap();
+        ExternalMap externalMap = new ExternalMap(1);
         Point origin = new Point(50,50);
+        MainPanel mainPanel = createUI(new World(env.getWidth(), env.getHeight()),  externalMap);
         ArrayList<Thread> threads = new ArrayList<>();
         for(int i = 0; i < BOT_COUNT; i++){
-            Bot bot = new Bot(i, env, map);
+            Bot bot = new Bot(i, env, externalMap);
             env.addBot(bot, origin);
             
             Thread thread = new Thread(bot);
