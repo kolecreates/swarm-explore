@@ -1,15 +1,18 @@
 package components;
 import bots.Bot;
+import graphics.StatInterface;
 import java.util.ArrayList;
 import utility.Point;
 import utility.Rotation;
 import utility.SQLClient;
+import graphics.ExploredPointsInterface;
+import graphics.MovingPointsInterface;
 /**
  * @author Kole Nunley
  * @since Dec 2, 2018
  * Represents the shared map constructed by bots and stored in an external database. 
  */
-public class ExternalMap {
+public class ExternalMap implements StatInterface, ExploredPointsInterface, MovingPointsInterface {
     private final SQLClient client;
     private final int id;
     private int width = 0;
@@ -27,14 +30,33 @@ public class ExternalMap {
     public int getHeight(){
         return width;
     }
+    @Override
     public double percentExplored(){
         return (double) exploredPoints / (double)(width*height);
     }
+    @Override
     public double getEfficiency(){
         return (double) exploredPoints / (double) totalSteps;
     }
-    public ArrayList<ArrayList<Integer>> getPoints(){
-        return client.readInts("SELECT * FROM points WHERE mapId="+id, 1, 2);
+    @Override
+    public ArrayList<Point> getExploredPoints(){
+        ArrayList<ArrayList<Integer>> list =  client.readInts("SELECT * FROM points WHERE mapId="+id, 2, 3);
+        ArrayList<Point> points = new ArrayList<>();
+        for(int i = 0; i < list.size(); i++){
+            ArrayList<Integer> row = list.get(i);
+            points.add(new Point(row.get(0), row.get(1)));
+        }
+        return points;
+    }
+    @Override
+    public ArrayList<Point> getMovingPoints() {
+        ArrayList<ArrayList<Integer>> list =  client.readInts("SELECT * FROM bots", 2, 3);
+        ArrayList<Point> points = new ArrayList<>();
+        for(int i = 0; i < list.size(); i++){
+            ArrayList<Integer> row = list.get(i);
+            points.add(new Point(row.get(0), row.get(1)));
+        }
+        return points;
     }
     /**
      * Record a bots current state on the external map. 

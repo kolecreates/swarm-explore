@@ -5,6 +5,7 @@ import agents.AgentInterface;
 import agents.SmartAgent;
 import java.util.ArrayList;
 import utility.Point;
+import graphics.MovingPointsInterface;
 
 /**
  * Represents a group of agents. Performs only light management such as initializing 
@@ -12,7 +13,7 @@ import utility.Point;
  * @author kole
  * @since Nov 29, 2018
  */
-public class Swarm {
+public class Swarm implements MovingPointsInterface {
     private final World world;
     private final Map map;
     private ArrayList<AgentInterface> agents;
@@ -67,6 +68,17 @@ public class Swarm {
     public ArrayList<AgentInterface> getAgents(){
         return agents;
     }
+    public ArrayList<Point> getAgentPositions(){
+        ArrayList<Point> positions = new ArrayList<>();
+        for(int i = 0; i < agents.size(); i++){
+            positions.add(agents.get(i).getPosition());
+        }
+        return positions;
+    }
+    @Override
+    public ArrayList<Point> getMovingPoints() {
+        return getAgentPositions();
+    }
     public String toString(){
         StringBuilder bldr = new StringBuilder();
         bldr.append("Size: ");
@@ -79,5 +91,6 @@ public class Swarm {
         bldr.append("%");
         return bldr.toString();
     }
+    
     
 }

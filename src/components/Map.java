@@ -1,14 +1,16 @@
 package components;
 
+import graphics.StatInterface;
 import java.util.ArrayList;
 import utility.Point;
+import graphics.ExploredPointsInterface;
 
 /**
  * Represents the explored area of a world.
  * @author kole
  * @since Nov 29, 2018
  */
-public class Map {
+public class Map implements StatInterface, ExploredPointsInterface {
     public static final int ESTIMATED_POINT = 0;
     public static final int EXPLORED_POINT = 1;
     private int exploredPointsCount = 0;
@@ -18,11 +20,13 @@ public class Map {
     private boolean xMaxed = false;
     private boolean yMaxed = false;
     private ArrayList<ArrayList<Integer>> points;
+    private ArrayList<Point> exploredPoints;
     /**
      * Initialize a new map. Maps start as a single point in space.
      */
     public Map(){
-        points = new ArrayList<ArrayList<Integer>>();
+        points = new ArrayList<>();
+        exploredPoints = new ArrayList<>();
     }
     /**
      * Register a point on the map as explored. The size of the map will expand
@@ -40,6 +44,7 @@ public class Map {
            ArrayList<Integer> temp = points.get(point.getX());
            temp.set(point.getY(), EXPLORED_POINT);
            points.set(point.getX(), temp);
+           exploredPoints.add(point);
            exploredPointsCount++;
         }else{
            revisitPointCount++;
@@ -84,10 +89,15 @@ public class Map {
     public ArrayList<ArrayList<Integer>> getPoints(){
         return points;
     } 
+    @Override
+    public ArrayList<Point> getExploredPoints(){
+        return exploredPoints;
+    }
     /**
      * Get the percentage of the current known World size that is explored.
      * @return double
      */
+    @Override
     public double percentExplored(){
         if(exploredPointsCount == 0){ return 0.0; }
         return (double) exploredPointsCount / (double) (width*height);
@@ -97,6 +107,7 @@ public class Map {
      * how many points were newly explored out of total number of points moved to.
      * @return 
      */
+    @Override
     public double getEfficiency(){
         return (double) exploredPointsCount / (exploredPointsCount + revisitPointCount);
     }

@@ -12,19 +12,19 @@ import javax.swing.JTextArea;
  * Displays various statistics about the simulation.
  */
 public class StatsPanel extends JPanel {
-    private final Map map;
+    private final StatInterface stats;
     private final JTextArea exploredStat;
     private final JTextArea efficiencyStat;
-    public StatsPanel(Map map){
-        this.map = map;
+    public StatsPanel(StatInterface stats){
+        this.stats = stats;
         exploredStat = new JTextArea();
         efficiencyStat = new JTextArea();
         super.add(exploredStat, BorderLayout.EAST);
         super.add(efficiencyStat, BorderLayout.WEST);
     }
     public void updateStats(){
-        String formattedExp = Double.toString(map.percentExplored()*100).substring(0, 3);
-        String formattedEff = Double.toString(map.getEfficiency()*100).substring(0, 3);
+        String formattedExp = Double.toString(stats.percentExplored()*100).substring(0, 3);
+        String formattedEff = Double.toString(stats.getEfficiency()*100).substring(0, 3);
         exploredStat.setText("Explored: " + formattedExp + "%");
         efficiencyStat.setText("Effficiency: " + formattedEff + "%");
     }

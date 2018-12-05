@@ -7,6 +7,7 @@ import components.World;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.util.ArrayList;
 import javax.swing.JPanel;
 import utility.Point;
 
@@ -18,11 +19,11 @@ import utility.Point;
 public class MainPanel extends JPanel {
     private final MapPanel mapPanel;
     private final StatsPanel statsPanel;
-    public MainPanel(Point dim, Points moving, Points explored, Statistics stats){
+    public MainPanel(Point dimensions, MovingPointsInterface moving, ExploredPointsInterface explored, StatInterface stats){
         super.setBackground(Color.WHITE);
-        mapPanel = new MapPanel(dim);
-        map.track(moving, Color.RED);
-        map.track(explored, Color.WHITE);
+        mapPanel = new MapPanel(dimensions);
+        mapPanel.display(explored, Color.WHITE);
+        mapPanel.display(moving, Color.RED);
         statsPanel = new StatsPanel(stats);
         
         super.add(mapPanel, BorderLayout.CENTER);

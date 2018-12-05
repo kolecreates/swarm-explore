@@ -30,6 +30,7 @@ public class Agent implements AgentInterface {
         this.map = map;
         this.origin = position;
         this.position = position;
+        this.velocity = generateRandomVelocity();
         adjustVelocity();
     }
     /**

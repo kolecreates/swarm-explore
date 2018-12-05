@@ -40,4 +40,7 @@ public class World {
     public int getHeight(){
         return height;
     }
+    public Point getDimensions(){
+        return new Point(width, height);
+    }
 }

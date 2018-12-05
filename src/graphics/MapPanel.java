@@ -19,48 +19,57 @@ import utility.Point;
  */
 public class MapPanel extends JPanel {
     public static final int SCALE = 5;
-    private final Map map;
-    private Swarm swarm;
-    private ArrayList<AgentInterface> agents;
-    private boolean drawAgents = false;
+    private ExploredPointsInterface exploredInterface;
+    private MovingPointsInterface movingInterface;
+    private Color exploredColor;
+    private Color movingColor;
+    private Point max;
+    private Point min;
     /**
-     * 
-     * @param width in scale units. pixels = units*MapPanel.SCALE
-     * @param height in scale units.
-     * @param map 
+     * @param dimension point object that represents the wxh in scale units. pixels = units*MapPanel.SCALE
      */
-    public MapPanel(int width, int height, Map map){
-        this.map = map;
-        super.setPreferredSize(new Dimension(width*SCALE, height*SCALE));
+    public MapPanel(Point dimension){
+        super.setPreferredSize(new Dimension(dimension.getX()*SCALE, dimension.getY()*SCALE));
         super.setBackground(Color.BLACK);
+        max = new Point(0,0);
+        min = new Point(dimension.getX(),dimension.getY());
     }
-    public void displaySwarm(Swarm swarm){
-        this.swarm = swarm;
-        this.agents = swarm.getAgents();
-        drawAgents = true;
+    public void display(ExploredPointsInterface pointInterface, Color color){
+        exploredInterface = pointInterface;
+        exploredColor = color;
     } 
+    public void display(MovingPointsInterface pointInterface, Color color){
+        movingInterface = pointInterface;
+        movingColor = color;
+    }
     @Override
     public void paintComponent(Graphics g){
         super.paintComponent(g);
-        ArrayList<ArrayList<Integer>> points = map.getPoints();
-        for(int i = 0; i < points.size(); i++){
-            for(int j = 0; j < points.get(i).size(); j++){
-                if(points.get(i).get(j) == Map.EXPLORED_POINT){
-                    g.setColor(Color.WHITE);
-                    g.fillRect(i*SCALE, j*SCALE, SCALE, SCALE);
-                }else {
-                    g.setColor(Color.BLUE);
-                    g.drawRect(i*SCALE, j*SCALE, SCALE, SCALE);
-                }
-                
+        g.setColor(Color.BLUE);
+        for(int i = min.getX(); i < max.getX(); i++){
+            for(int j = min.getY(); j < max.getY(); j++){
+                g.drawRect(i*SCALE, j*SCALE, SCALE, SCALE);
             }
         }
-        if(drawAgents){
-            g.setColor(Color.red);
-            for(int i = 0; i < agents.size(); i++){
-                Point pos = agents.get(i).getPosition();
-                g.fillOval(pos.getX()*SCALE, pos.getY()*SCALE, SCALE, SCALE);
-            }
+        g.setColor(exploredColor);
+        ArrayList<Point> ePoints = exploredInterface.getExploredPoints();
+        for(int j = 0; j < ePoints.size(); j++){
+            Point p = ePoints.get(j);
+            updateMinMax(p);
+            g.fillRect(p.getX()*SCALE, p.getY()*SCALE, SCALE, SCALE);
         }
+        g.setColor(movingColor);
+        ArrayList<Point> mPoints = movingInterface.getMovingPoints();
+        for(int j = 0; j < mPoints.size(); j++){
+            Point p = mPoints.get(j);
+            updateMinMax(p);
+            g.fillRect(p.getX()*SCALE, p.getY()*SCALE, SCALE, SCALE);
+        }
+    }
+    private void updateMinMax(Point point){
+        if(point.getX() > max.getX()){ max = new Point(point.getX(), max.getY()); }
+        if(point.getY() > max.getY()){ max = new Point(max.getX(), point.getY()); }
+        if(point.getX() < min.getX()){ min = new Point(point.getX(), min.getY()); }
+        if(point.getY() < min.getY()){ min = new Point(min.getX(), point.getY()); }
     }
 }

@@ -72,4 +72,7 @@ public class Environment {
     public int getHeight(){
         return height;
     }
+    public Point getDimensions(){
+        return new Point(width, height);
+    }
 }
