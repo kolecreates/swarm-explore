@@ -30,7 +30,7 @@ public class SQLClient {
     public void write(String query){
         try {
             Statement statement = connection.createStatement();
-            statement.execute(query);
+            statement.executeUpdate(query);
         } catch (SQLException ex) {
             System.err.println(ex.getMessage());
         }

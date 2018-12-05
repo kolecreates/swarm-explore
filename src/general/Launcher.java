@@ -25,12 +25,12 @@ public class Launcher {
     static final int FRAME_RATE = 50;
     static final int STEPS_PER_FRAME = 2;
     static final int AGENT_COUNT = 5;
-    static final int BOT_COUNT = 3;
+    static final int BOT_COUNT = 1;
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        agentSwarm();
+        botSwarm();
         
     }
     private static void botSwarm(){
@@ -40,12 +40,21 @@ public class Launcher {
         MainPanel mainPanel = createUI(env.getDimensions(),  externalMap, externalMap, externalMap);
         ArrayList<Thread> threads = new ArrayList<>();
         for(int i = 0; i < BOT_COUNT; i++){
-            Bot bot = new Bot(i, env, externalMap);
-            env.addBot(bot, origin);
-            
+            Bot bot = new Bot(i, env, externalMap, FRAME_RATE);
+            env.addBot(bot, origin);            
             Thread thread = new Thread(bot);
             threads.add(thread);
             thread.start();
+        }
+        while(true){
+            mainPanel.refresh();
+            try{
+                Thread.sleep(FRAME_RATE);
+            }
+            catch(InterruptedException ex)
+            {
+                Thread.currentThread().interrupt();
+            }
         }
     }
     

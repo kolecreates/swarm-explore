@@ -7,10 +7,10 @@ package utility;
  * a suite of utility functions.
  */
 public class Rotation {
-    public static final Rotation EAST = new Rotation(-1.0, 0.0 );
-    public static final Rotation WEST = new Rotation(1.0, 0.0 );
-    public static final Rotation NORTH = new Rotation(0.0, 1.0 );
-    public static final Rotation SOUTH = new Rotation(0.0, -1.0 );
+    public static final Rotation EAST = new Rotation(1.0, 0.0 );
+    public static final Rotation WEST = new Rotation(-1.0, 0.0 );
+    public static final Rotation NORTH = new Rotation(0.0, -1.0 );
+    public static final Rotation SOUTH = new Rotation(0.0, 1.0 );
     private final double x;
     private final double y;
     public Rotation(double x, double y){
@@ -33,8 +33,8 @@ public class Rotation {
         double radians = (Math.PI / 180) * angle;
         double cos = Math.cos(radians);
         double sin = Math.sin(radians);
-        double nx = (cos * x) + (sin * y);
-        double ny = (cos * y) - (sin * x);
+        double nx = ((cos * x) + (sin * y)) % 1;
+        double ny = ((cos * y) - (sin * x)) % 1;
         return new Rotation(nx, ny);
     }
     public boolean equal(Rotation other){

@@ -9,8 +9,8 @@ CREATE TABLE bots (
     posy INT NOT NULL,
     velx INT NOT NULL,
     vely INT NOT NULL,
-    rotx INT NOT NULL,
-    roty INT NOT NULL,
+    rotx DOUBLE NOT NULL,
+    roty DOUBLE NOT NULL,
     step INT DEFAULT 0
 );
 CREATE TABLE map (

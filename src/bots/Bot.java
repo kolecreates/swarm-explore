@@ -19,6 +19,7 @@ public class Bot implements Runnable  {
     public final int id;
     private final Environment env;
     private final ExternalMap map;
+    private final int STEP_TIMEOUT_MS;
     private Point position;
     private Rotation rotation;
     private Point velocity;
@@ -32,13 +33,14 @@ public class Bot implements Runnable  {
      * @param env
      * @param map 
      */
-    public Bot(int id, Environment env, ExternalMap map){
+    public Bot(int id, Environment env, ExternalMap map, int STEP_TIMEOUT_MS){
         this.id = id;
         this.env = env;
         this.map = map;
         this.rotation = Rotation.SOUTH;
         this.position = new Point(0,0);
         this.velocity = new Point(1,1);
+        this.STEP_TIMEOUT_MS = STEP_TIMEOUT_MS;
     }
     /**
      * Begin moving around and exploring the environment. Overrides
@@ -50,10 +52,17 @@ public class Bot implements Runnable  {
         while(!map.isExplored()){
             while(env.bump(this)){
                 map.log(this, true);
-                rotation = rotation.rotate(90);
+                rotation = rotation.rotate(45);
             }
             position = position.add(velocity.mult(rotation.toPoint()));
             map.log(this, false);
+            try{
+                Thread.sleep(STEP_TIMEOUT_MS);
+            }
+            catch(InterruptedException ex)
+            {
+                Thread.currentThread().interrupt();
+            }
         }
     }
     /**

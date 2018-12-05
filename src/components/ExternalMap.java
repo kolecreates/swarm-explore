@@ -75,9 +75,10 @@ public class ExternalMap implements StatInterface, ExploredPointsInterface, Movi
         str.append(v.getX()); str.append(",");
         str.append(v.getY()); str.append(",");
         str.append(r.getX()); str.append(",");
-        str.append(r.getY()); 
+        str.append(r.getY()); str.append(",");
+        str.append(0);
         str.append(")");
-        str.append("ON DUPLICATE KEY UPDATE");
+        str.append(" ON DUPLICATE KEY UPDATE ");
         str.append("posx="); str.append(p.getX()); str.append(",");
         str.append("posy="); str.append(p.getY()); str.append(",");
         str.append("velx="); str.append(v.getX()); str.append(",");
@@ -88,16 +89,11 @@ public class ExternalMap implements StatInterface, ExploredPointsInterface, Movi
         client.write("UPDATE bots set step = step + 1 WHERE id=" + bot.id);
         
         str = new StringBuilder();
-        str.append("INSERT INTO points VALUES (");
+        str.append("INSERT IGNORE INTO points VALUES (");
         str.append(id); str.append(",");
         str.append(p.getX()); str.append(",");
-        str.append(p.getY());
+        str.append(p.getY()); str.append(",");
         str.append(bump);
-        str.append(")");
-        str.append("WHERE not exists (SELECT * FROM points WHERE x=");
-        str.append(p.getX());
-        str.append(" AND y=");
-        str.append(p.getY());
         str.append(")");
         client.write(str.toString());
     }
@@ -117,13 +113,14 @@ public class ExternalMap implements StatInterface, ExploredPointsInterface, Movi
         width = xMax - xMin;
         height = yMax - yMin;
         StringBuilder str = new StringBuilder();
-        str.append("UPDATE map width=");
+        str.append("UPDATE map SET width=");
         str.append(width);
         str.append(", height=");
         str.append(height);
         str.append(" WHERE id=");
         str.append(id);
         client.write(str.toString());
-        return exploredPoints == (width*height);
+        int totalPoints = width*height;
+        return exploredPoints == totalPoints && totalPoints > 0;
     }
 }
