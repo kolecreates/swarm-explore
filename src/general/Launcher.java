@@ -3,7 +3,7 @@ package general;
 import bots.Bot;
 import components.Environment;
 import components.ExternalMap;
-import components.Map;
+import components.PointSystemConverter;
 import components.Swarm;
 import components.World;
 import graphics.MainPanel;
@@ -25,19 +25,19 @@ public class Launcher {
     static final int FRAME_RATE = 50;
     static final int STEPS_PER_FRAME = 2;
     static final int AGENT_COUNT = 5;
-    static final int BOT_COUNT = 1;
+    static final int BOT_COUNT = 5;
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         botSwarm();
-        
     }
     private static void botSwarm(){
         Environment env = new Environment(100,100);
         ExternalMap externalMap = new ExternalMap(1);
+        PointSystemConverter conv = new PointSystemConverter(env, externalMap);
         Point origin = new Point(50,50);
-        MainPanel mainPanel = createUI(env.getDimensions(),  externalMap, externalMap, externalMap);
+        MainPanel mainPanel = createUI(env.getDimensions(),  conv, conv, externalMap);
         ArrayList<Thread> threads = new ArrayList<>();
         for(int i = 0; i < BOT_COUNT; i++){
             Bot bot = new Bot(i, env, externalMap, FRAME_RATE);
@@ -60,7 +60,7 @@ public class Launcher {
     
     private static void agentSwarm(){
         World world = new World(100, 100);
-        Swarm swarm = new Swarm(world, AGENT_COUNT, false);
+        Swarm swarm = new Swarm(world, AGENT_COUNT, true);
         int steps = 0;
         MainPanel mainPanel = createUI(world.getDimensions(), swarm, swarm.getMap(), swarm.getMap());
         while(!swarm.finished()){

@@ -12,7 +12,7 @@ import graphics.MovingPointsInterface;
  * @since Dec 2, 2018
  * Represents the shared map constructed by bots and stored in an external database. 
  */
-public class ExternalMap implements StatInterface, ExploredPointsInterface, MovingPointsInterface {
+public class ExternalMap implements StatInterface, MovingPointsInterface {
     private final SQLClient client;
     private final int id;
     private int width = 0;
@@ -38,15 +38,8 @@ public class ExternalMap implements StatInterface, ExploredPointsInterface, Movi
     public double getEfficiency(){
         return (double) exploredPoints / (double) totalSteps;
     }
-    @Override
-    public ArrayList<Point> getExploredPoints(){
-        ArrayList<ArrayList<Integer>> list =  client.readInts("SELECT * FROM points WHERE mapId="+id, 2, 3);
-        ArrayList<Point> points = new ArrayList<>();
-        for(int i = 0; i < list.size(); i++){
-            ArrayList<Integer> row = list.get(i);
-            points.add(new Point(row.get(0), row.get(1)));
-        }
-        return points;
+    public ArrayList<ArrayList<Integer>> getExploredPoints(){
+        return client.readInts("SELECT * FROM points WHERE mapId="+id, 2, 4);        
     }
     @Override
     public ArrayList<Point> getMovingPoints() {
@@ -91,6 +84,7 @@ public class ExternalMap implements StatInterface, ExploredPointsInterface, Movi
         str = new StringBuilder();
         str.append("INSERT IGNORE INTO points VALUES (");
         str.append(id); str.append(",");
+        str.append(bot.id); str.append(",");
         str.append(p.getX()); str.append(",");
         str.append(p.getY()); str.append(",");
         str.append(bump);

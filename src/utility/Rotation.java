@@ -33,8 +33,8 @@ public class Rotation {
         double radians = (Math.PI / 180) * angle;
         double cos = Math.cos(radians);
         double sin = Math.sin(radians);
-        double nx = ((cos * x) + (sin * y)) % 1;
-        double ny = ((cos * y) - (sin * x)) % 1;
+        double nx = (cos * x) + (sin * y);
+        double ny = (cos * y) - (sin * x);
         return new Rotation(nx, ny);
     }
     public boolean equal(Rotation other){
@@ -54,7 +54,7 @@ public class Rotation {
      * @return 
      */
     public double getDegrees(){
-        return Math.toDegrees(Math.atan2(x, y));
+        return Math.toDegrees(Math.atan2(x, y)) % 360;
     }
     public Point toPoint(){
         return new Point((int) x, (int) y);

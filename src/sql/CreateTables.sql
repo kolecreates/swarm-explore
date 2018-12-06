@@ -1,6 +1,7 @@
 USE swarmexplore;
-DROP TABLE IF EXISTS bots;
+
 DROP TABLE IF EXISTS points;
+DROP TABLE IF EXISTS bots;
 DROP TABLE IF EXISTS map;
 
 CREATE TABLE bots ( 
@@ -20,9 +21,11 @@ CREATE TABLE map (
 );
 CREATE TABLE points (
 	mapId INT NOT NULL,
+    botId INT NOT NULL,
     x INT NOT NULL,
     y INT NOT NULL,
     barrier BOOL NOT NULL,
     PRIMARY KEY (x, y),
+    FOREIGN KEY (botId) REFERENCES bots(id),
     FOREIGN KEY (mapId) REFERENCES map(id)
 );

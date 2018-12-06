@@ -50,8 +50,8 @@ public class Environment {
         final int x = position.getX();
         final int y = position.getY();
         final int a = bot.getBumperAngle()/2;
-        return    (x <= 0 && rot.within(a,Rotation.EAST)) 
-               || (x >= width && rot.within(a, Rotation.WEST))
+        return    (x <= 0 && rot.within(a,Rotation.WEST)) 
+               || (x >= width && rot.within(a, Rotation.EAST))
                || (y <= 0 && rot.within(a, Rotation.NORTH))
                || (y >= height && rot.within(a, Rotation.SOUTH));
     }

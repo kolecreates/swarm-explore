@@ -29,7 +29,7 @@ public class MapPanel extends JPanel {
      * @param dimension point object that represents the wxh in scale units. pixels = units*MapPanel.SCALE
      */
     public MapPanel(Point dimension){
-        super.setPreferredSize(new Dimension(dimension.getX()*SCALE, dimension.getY()*SCALE));
+        super.setPreferredSize(new Dimension((dimension.getX()+1)*SCALE, (dimension.getY()+1)*SCALE));
         super.setBackground(Color.BLACK);
         max = new Point(0,0);
         min = new Point(dimension.getX(),dimension.getY());

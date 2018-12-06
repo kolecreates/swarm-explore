@@ -2,6 +2,7 @@ package bots;
 
 import components.ExternalMap;
 import components.Environment;
+import java.util.Random;
 import utility.Point;
 import utility.Rotation;
 
@@ -20,6 +21,8 @@ public class Bot implements Runnable  {
     private final Environment env;
     private final ExternalMap map;
     private final int STEP_TIMEOUT_MS;
+    private final int RANDOM_ROTATE_CHANCE = 5;
+    private final Random rng;
     private Point position;
     private Rotation rotation;
     private Point velocity;
@@ -34,6 +37,7 @@ public class Bot implements Runnable  {
      * @param map 
      */
     public Bot(int id, Environment env, ExternalMap map, int STEP_TIMEOUT_MS){
+        this.rng = new Random();
         this.id = id;
         this.env = env;
         this.map = map;
@@ -50,12 +54,12 @@ public class Bot implements Runnable  {
     @Override
     public void run(){
         while(!map.isExplored()){
-            while(env.bump(this)){
-                map.log(this, true);
-                rotation = rotation.rotate(45);
+            boolean bump = false;
+            while(bump = env.bump(this) || rng.nextInt(100) < RANDOM_ROTATE_CHANCE){
+                rotation = rotation.rotate(90);
             }
+            map.log(this, bump);
             position = position.add(velocity.mult(rotation.toPoint()));
-            map.log(this, false);
             try{
                 Thread.sleep(STEP_TIMEOUT_MS);
             }
