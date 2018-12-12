@@ -24,15 +24,15 @@ import graphics.MovingPointsInterface;
 public class Launcher {
     static final int FRAME_RATE = 50;
     static final int STEPS_PER_FRAME = 2;
-    static final int AGENT_COUNT = 5;
+    static final int AGENT_COUNT = 4;
     static final int BOT_COUNT = 5;
-    /**
-     * @param args the command line arguments
-     */
+    
     public static void main(String[] args) {
-        botSwarm();
+        //agentSwarm(true);
+        botSwarm(true);
     }
-    private static void botSwarm(){
+    
+    private static void botSwarm(boolean smart){
         Environment env = new Environment(100,100);
         ExternalMap externalMap = new ExternalMap(1);
         PointSystemConverter conv = new PointSystemConverter(env, externalMap);
@@ -40,7 +40,7 @@ public class Launcher {
         MainPanel mainPanel = createUI(env.getDimensions(),  conv, conv, externalMap);
         ArrayList<Thread> threads = new ArrayList<>();
         for(int i = 0; i < BOT_COUNT; i++){
-            Bot bot = new Bot(i, env, externalMap, FRAME_RATE);
+            Bot bot = new Bot(i, env, externalMap, FRAME_RATE, smart);
             env.addBot(bot, origin);            
             Thread thread = new Thread(bot);
             threads.add(thread);
@@ -58,9 +58,9 @@ public class Launcher {
         }
     }
     
-    private static void agentSwarm(){
+    private static void agentSwarm(boolean smart){
         World world = new World(100, 100);
-        Swarm swarm = new Swarm(world, AGENT_COUNT, true);
+        Swarm swarm = new Swarm(world, AGENT_COUNT, smart);
         int steps = 0;
         MainPanel mainPanel = createUI(world.getDimensions(), swarm, swarm.getMap(), swarm.getMap());
         while(!swarm.finished()){
@@ -89,7 +89,7 @@ public class Launcher {
         JFrame mainFrame = new JFrame("SwarmExplore");
         mainFrame.setBackground(Color.WHITE);
         mainFrame.setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
-        mainFrame.setPreferredSize(new Dimension(600,600));
+        mainFrame.setPreferredSize(new Dimension(1000,1000));
         MainPanel mainPanel = new MainPanel(innerDimension, moving, explored, stats);
         mainFrame.getContentPane().add(mainPanel);
         mainFrame.pack();

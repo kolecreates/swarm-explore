@@ -117,4 +117,12 @@ public class ExternalMap implements StatInterface, MovingPointsInterface {
         int totalPoints = width*height;
         return exploredPoints == totalPoints && totalPoints > 0;
     }
+    public boolean isExplored(Point point) {
+        StringBuilder str = new StringBuilder();
+        str.append("SELECT * FROM points WHERE x=");
+        str.append(point.getX());
+        str.append(" AND y=");
+        str.append(point.getY());
+        return client.readInts(str.toString(), 2, 4).size() > 0;
+    }
 }

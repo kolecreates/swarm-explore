@@ -18,6 +18,7 @@ import utility.Rotation;
  */
 public class Bot implements Runnable  {
     public final int id;
+    private final boolean smart;
     private final Environment env;
     private final ExternalMap map;
     private final int STEP_TIMEOUT_MS;
@@ -36,7 +37,7 @@ public class Bot implements Runnable  {
      * @param env
      * @param map 
      */
-    public Bot(int id, Environment env, ExternalMap map, int STEP_TIMEOUT_MS){
+    public Bot(int id, Environment env, ExternalMap map, int STEP_TIMEOUT_MS, boolean smart){
         this.rng = new Random();
         this.id = id;
         this.env = env;
@@ -45,6 +46,7 @@ public class Bot implements Runnable  {
         this.position = new Point(0,0);
         this.velocity = new Point(1,1);
         this.STEP_TIMEOUT_MS = STEP_TIMEOUT_MS;
+        this.smart = smart;
     }
     /**
      * Begin moving around and exploring the environment. Overrides
@@ -54,9 +56,12 @@ public class Bot implements Runnable  {
     @Override
     public void run(){
         while(!map.isExplored()){
-            boolean bump = false;
-            while(bump = env.bump(this) || rng.nextInt(100) < RANDOM_ROTATE_CHANCE){
+            boolean bump = env.bump(this) ;
+            boolean overlap = predictOverlap();
+            while(bump || overlap || ((overlap || !smart) && (rng.nextInt(100) < RANDOM_ROTATE_CHANCE))){
                 rotation = rotation.rotate(90);
+                bump = env.bump(this);
+                overlap = predictOverlap();
             }
             map.log(this, bump);
             position = position.add(velocity.mult(rotation.toPoint()));
@@ -85,6 +90,9 @@ public class Bot implements Runnable  {
     }
     public Point getVelocity(){
         return velocity;
+    }
+    private boolean predictOverlap() {
+        return smart && map.isExplored(position.add(velocity.mult(rotation.toPoint())));
     }
     
 }

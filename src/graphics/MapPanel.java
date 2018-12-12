@@ -18,7 +18,7 @@ import utility.Point;
  * @since Nov 29, 2018
  */
 public class MapPanel extends JPanel {
-    public static final int SCALE = 5;
+    public static final int SCALE = 7;
     private ExploredPointsInterface exploredInterface;
     private MovingPointsInterface movingInterface;
     private Color exploredColor;
